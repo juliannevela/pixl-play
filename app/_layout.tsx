@@ -1,37 +1,42 @@
-import { DarkTheme, DefaultTheme, ThemeProvider } from '@react-navigation/native';
-import { useFonts } from 'expo-font';
-import { Stack } from 'expo-router';
-import * as SplashScreen from 'expo-splash-screen';
-import { useEffect } from 'react';
-import 'react-native-reanimated';
+import { useEffect } from "react";
+import { SplashScreen, Stack } from "expo-router";
+import { useFonts } from "expo-font";
+import GlobalProvider from '@/context/GlobalProvider'
+// import 'expo-dev-client';
 
-import { useColorScheme } from '@/hooks/useColorScheme';
 
-// Prevent the splash screen from auto-hiding before asset loading is complete.
-SplashScreen.preventAutoHideAsync();
+import '../global.css'
 
 export default function RootLayout() {
-  const colorScheme = useColorScheme();
-  const [loaded] = useFonts({
-    SpaceMono: require('../assets/fonts/SpaceMono-Regular.ttf'),
+  const [fontsLoaded, error] = useFonts({
+    "Lato-Black": require("../assets/fonts/Lato-Black.ttf"),
+    "Lato-Bold": require("../assets/fonts/Lato-Bold.ttf"),
+    "Lato-Light": require("../assets/fonts/Lato-Light.ttf"),
+    "Lato-Italic": require("../assets/fonts/Lato-Italic.ttf"),
+    "Lato-Regular": require("../assets/fonts/Lato-Regular.ttf"),
+    "Lato-Thin": require("../assets/fonts/Lato-Thin.ttf"),
   });
 
   useEffect(() => {
-    if (loaded) {
+    if (error) throw error;
+
+    if (fontsLoaded) {
       SplashScreen.hideAsync();
     }
-  }, [loaded]);
+  }, [fontsLoaded, error]);
 
-  if (!loaded) {
+  if (!fontsLoaded && !error) {
     return null;
   }
 
   return (
-    <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
+    <GlobalProvider>
       <Stack>
+        <Stack.Screen name="index" options={{ headerShown: false }} />
+        <Stack.Screen name="(auth)" options={{ headerShown: false }} />
         <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-        <Stack.Screen name="+not-found" />
+        {/* <Stack.Screen name="/search/[query]" options={{ headerShown: false }} /> */}
       </Stack>
-    </ThemeProvider>
+    </GlobalProvider>
   );
 }

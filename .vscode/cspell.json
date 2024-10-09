@@ -1,0 +1,5 @@
+{
+  "allowCompoundWords": true,
+  "ignorePaths": ["./package.json"],
+  "ignoreRegExpList": ["/import(.*?);/gm"]
+}
