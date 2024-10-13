@@ -13,11 +13,8 @@ import { WebView } from 'react-native-webview'
 import { icons } from "@/constants";
 import { TrendingItemProps } from "@/types/types";
 import { zoomIn, zoomOut } from "@/utils/animations";
+import { isEmbeddedVideo } from "@/utils/utils";
 import { AVPlaybackStatus, ResizeMode, Video } from "expo-av";
-
-const isEmbeddedVideo = (url: string | string[]) => {
-  return url.includes("youtube.com") || url.includes("vimeo.com");
-};
 
 const TrendingItem = ({ activeItem, item }: TrendingItemProps) => {
   const [play, setPlay] = useState(false);

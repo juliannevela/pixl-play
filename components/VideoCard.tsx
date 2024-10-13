@@ -1,10 +1,24 @@
+import { useState } from 'react';
+import { ResizeMode, Video } from 'expo-av';
+import { View, Text, Image, TouchableOpacity, ViewStyle, Dimensions } from 'react-native'
+import WebView from 'react-native-webview';
+
 import { icons } from '@/constants'
 import { VideoCardProps } from '@/types/types'
-import { useState } from 'react';
-import { View, Text, Image, TouchableOpacity } from 'react-native'
+import { isEmbeddedVideo } from '@/utils/utils';
 
 const VideoCard = ({ video: { title, thumbnail, video, creator: { username, avatar } } }: VideoCardProps) => {
   const [play, setPlay] = useState<boolean>(false);
+  const isEmbedded = isEmbeddedVideo(video);
+
+  const itemStyle: ViewStyle = {
+    height: Dimensions.get("window").width * 0.5625, // 16:9 aspect ratio
+    width: "100%",
+    marginTop: 12,
+    borderRadius: 12,
+    overflow: "hidden",
+  };
+
   return (
     <View className='flex-col items-center px-4 mb-14'>
       <View className='flex-row gap-3 items-start'>
@@ -33,7 +47,46 @@ const VideoCard = ({ video: { title, thumbnail, video, creator: { username, avat
       </View>
 
       {play ? (
-        <Text className='text-white'>Playing video</Text>
+        isEmbedded ? (
+          <View
+            style={itemStyle}>
+            <WebView
+              source={{ uri: video }}
+              style={{
+                flex: 1
+              }}
+              allowsInlineMediaPlayback={true}
+              javaScriptEnabled={true}
+              allowsFullscreenVideo={true}
+              scalesPageToFit={true}
+              startInLoadingState={true}
+            />
+          </View>
+        ) : (
+          <View
+            style={itemStyle}>
+            <Video
+              source={{ uri: video }}
+              style={{
+                flex: 1,
+                margin: 0,
+                padding: 0
+              }}
+              useNativeControls
+              resizeMode={ResizeMode.COVER}
+              shouldPlay
+              onPlaybackStatusUpdate={(status) => {
+                if ('finished' in status && status.finished) {
+                  setPlay(false);
+                }
+              }}
+              onError={(error) => {
+                console.error("Video error:", error);
+                setPlay(false);
+              }}
+            />
+          </View>
+        )
       ) : (
         <TouchableOpacity
           className='w-full h-60 rounded-xl mt-3 relative justify-center items-center'
