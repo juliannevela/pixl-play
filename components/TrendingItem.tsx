@@ -24,8 +24,8 @@ const TrendingItem = ({ activeItem, item }: TrendingItemProps) => {
   const isEmbedded = isEmbeddedVideo(item.video);
 
   const itemStyle: ViewStyle = {
-    width: Dimensions.get("window").width * 0.55,
-    height: Dimensions.get("window").height * 0.45,
+    width: 208,
+    height: 288,
     borderRadius: 33,
     overflow: "hidden",
     marginTop: 15,
@@ -34,16 +34,23 @@ const TrendingItem = ({ activeItem, item }: TrendingItemProps) => {
 
   return (
     <Animatable.View
-      style={{ marginRight: 20 }}
+      style={itemStyle}
       animation={activeItem === item.$id ? zoomIn() : zoomOut()}
       duration={500}
     >
       {play ? (
         isEmbedded ? (
-          <View style={itemStyle}>
+          <View
+            style={{
+              ...itemStyle,
+              marginTop: 0
+            }}>
             <WebView
               source={{ uri: item.video }}
-              style={{ flex: 1 }}
+              style={{
+                ...itemStyle,
+                marginTop: 0
+              }}
               allowsInlineMediaPlayback={true}
               javaScriptEnabled={true}
               allowsFullscreenVideo={true}
@@ -52,10 +59,17 @@ const TrendingItem = ({ activeItem, item }: TrendingItemProps) => {
             />
           </View>
         ) : (
-          <View style={itemStyle}>
+          <View
+            style={{
+              ...itemStyle,
+              marginTop: 0
+            }}>
             <Video
               source={{ uri: item.video }}
-              style={{ flex: 1 }}
+              style={{
+                ...itemStyle,
+                marginTop: 0
+              }}
               useNativeControls
               resizeMode={ResizeMode.COVER}
               shouldPlay
@@ -73,7 +87,6 @@ const TrendingItem = ({ activeItem, item }: TrendingItemProps) => {
         )
       ) : (
         <TouchableOpacity
-          style={itemStyle}
           activeOpacity={0.7}
           onPress={() => setPlay(true)}
         >
