@@ -2,10 +2,12 @@ import { useState } from "react";
 import { View, TouchableOpacity, Image, TextInput, Alert } from "react-native";
 
 import { icons } from "@/constants";
-import { FormFieldProps } from "@/types/types";
+import { router, usePathname } from "expo-router";
 
-const SearchInput = ({ title, value, handleChangeText, otherStyles, ...props }: FormFieldProps) => {
+const SearchInput = () => {
   const [isFocused, setFocused] = useState(false)
+  const [query, setQuery] = useState<string>('')
+  const pathName = usePathname();
 
   return (
     <View className='flex-row w-full h-16 px-4 bg-black-100 rounded-2xl items-center'
@@ -15,16 +17,23 @@ const SearchInput = ({ title, value, handleChangeText, otherStyles, ...props }: 
       }}>
       <TextInput
         className="text-base mt-0.5 text-white flex-1 font-lregular"
-        value={value}
+        value={query}
         placeholder="Search a video topic"
         placeholderTextColor="#CDCDE0"
-        onChangeText={handleChangeText}
+        onChangeText={(e) => setQuery(e)}
         onFocus={() => setFocused(true)}
         onBlur={() => setFocused(false)}
       />
 
       <TouchableOpacity
-        onPress={() => { }}
+        onPress={() => {
+          if (!query) {
+            return Alert.alert('Missing query', "Please input something to search results across the database.")
+          }
+
+          if (pathName.startsWith('/search')) router.setParams({ query })
+          else router.push(`/search/${query}`)
+        }}
       >
         <Image
           source={icons.search}
