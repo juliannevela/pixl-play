@@ -1,6 +1,7 @@
 import * as Animatable from "react-native-animatable";
 import { ImageSourcePropType } from "react-native";
 import { Models } from "react-native-appwrite";
+import { Href } from "expo-router";
 
 export type CreateUserProps = {
   email: string;
@@ -41,6 +42,8 @@ export type InitialGlobalContext = {
 export type EmptyStateProps = {
   title: string;
   subtitle: string;
+  buttonTitle: string;
+  redirect: Href<string>;
 };
 
 export type TrendingProps = {

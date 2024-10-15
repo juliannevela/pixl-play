@@ -46,6 +46,8 @@ const Search = () => {
           <EmptyState
             title='No Videos Found'
             subtitle='Try searching for something else'
+            buttonTitle='Back to Explore'
+            redirect={"/home"}
           />
         )}
       />

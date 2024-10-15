@@ -5,24 +5,29 @@ import { images } from "@/constants";
 import CustomButton from "./CustomButton";
 import { EmptyStateProps } from "@/types/types";
 
-const EmptyState = ({ title, subtitle }: EmptyStateProps) => {
+const EmptyState = ({
+  title,
+  subtitle,
+  buttonTitle,
+  redirect,
+}: EmptyStateProps) => {
   return (
-    <View className="flex justify-center items-center px-4">
+    <View className='flex items-center justify-center px-4'>
       <Image
         source={images.empty}
-        resizeMode="contain"
-        className="w-[270px] h-[216px]"
+        resizeMode='contain'
+        className='h-[216px] w-[270px]'
       />
 
-      <Text className="text-xl font-lbold text-gray-100">{title}</Text>
-      <Text className="text-xl text-center font-llight text-white mt-2">
+      <Text className='font-lbold text-xl text-gray-100'>{title}</Text>
+      <Text className='mt-2 text-center font-llight text-xl text-white'>
         {subtitle}
       </Text>
 
       <CustomButton
-        title="Create video"
-        handlePress={() => router.push("/create")}
-        containerStyles="w-full my-5"
+        title={buttonTitle}
+        handlePress={() => router.push(redirect)}
+        containerStyles='w-full my-5'
       />
     </View>
   );

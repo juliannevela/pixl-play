@@ -22,65 +22,72 @@ const Home = () => {
     setRefreshing(true);
     await refetch();
     setRefreshing(false);
-  }
+  };
 
   return (
     <SafeAreaView
       style={{
-        backgroundColor: '#161622',
-        height: '100%',
+        backgroundColor: "#161622",
+        height: "100%",
       }}
-      edges={['top']}
+      edges={["top"]}
     >
       <FlatList
         data={posts}
         keyExtractor={(item) => String(item.$id)}
-        renderItem={({ item }) => (
-          <VideoCard video={item} />
-        )}
+        renderItem={({ item }) => <VideoCard video={item} />}
         ListHeaderComponent={() => (
-          <View className="flex my-6 px-4 space-y-6">
-            <View className="flex justify-between items-start flex-row mb-6">
+          <View className='my-6 flex space-y-6 px-4'>
+            <View className='mb-6 flex flex-row items-start justify-between'>
               <View>
-                <Text className="font-lregular text-sm text-gray-100">
+                <Text className='font-lregular text-sm text-gray-100'>
                   Welcome Back
                 </Text>
-                <Text className="text-2xl font-lbold text-white">
+                <Text className='font-lbold text-2xl text-white'>
                   MerakiStudio
                 </Text>
               </View>
 
-              <View className="mt-1.5">
+              <View className='mt-1.5'>
                 <Image
                   source={images.logoSmall}
-                  className="w-9 h-10"
-                  resizeMode="contain"
+                  className='h-10 w-9'
+                  resizeMode='contain'
                 />
               </View>
             </View>
 
             <SearchInput />
 
-            <View className="w-full flex-1 pt-5 pb-8">
-              <Text className="text-lg font-lregular text-gray-100 mb-3">
+            <View className='w-full flex-1 pb-8 pt-5'>
+              <Text className='mb-3 font-lregular text-lg text-gray-100'>
                 Latest Videos
               </Text>
 
               <Trending posts={latestPosts} />
-
             </View>
           </View>
         )}
         ListEmptyComponent={() => (
           <EmptyState
-            title="No Videos Found"
-            subtitle="Be the first to create a video"
+            title='No Videos Found'
+            subtitle='Be the first to create a video'
+            buttonTitle='Create Video'
+            redirect={"/create"}
           />
         )}
-        refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}
+        refreshControl={
+          <RefreshControl
+            refreshing={refreshing}
+            onRefresh={onRefresh}
+          />
+        }
       />
 
-      <StatusBar backgroundColor="#161622" style="light" />
+      <StatusBar
+        backgroundColor='#161622'
+        style='light'
+      />
     </SafeAreaView>
   );
 };
