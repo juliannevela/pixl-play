@@ -66,3 +66,7 @@ export type TabIconProps = {
 export type CustomAnimation = Animatable.CustomAnimation & {
   [key: string]: any;
 };
+
+export type SearchInputProps = {
+  initialQuery: string;
+};
