@@ -1,18 +1,34 @@
-import { View, Text, Image, FlatList } from "react-native";
+import { View, Image, FlatList, TouchableOpacity } from "react-native";
+import { router } from "expo-router";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { StatusBar } from "expo-status-bar";
-import { EmptyState, VideoCard } from "@/components";
-import { icons, images } from "@/constants";
+import { EmptyState, VideoCard, InfoBox } from "@/components";
+import { icons } from "@/constants";
 import useAppwrite from "@/lib/useAppwrite";
-import { getAllPosts, getCurrentUser } from "@/lib/appwrite";
+import { getUserPosts, signOut } from "@/lib/appwrite";
+import { useGlobalContext } from "@/context/GlobalProvider";
 
 const Profile = () => {
-  const { data: posts } = useAppwrite(getAllPosts);
-  const {
-    data: { username, avatar },
-  } = useAppwrite(getCurrentUser);
+  const globalContext = useGlobalContext();
+  if (!globalContext) {
+    throw new Error("Global context is null");
+  }
 
-  // console.log(username);
+  const { user, setUser, setIsLoggedIn } = globalContext;
+  const { data: posts } = useAppwrite(() => getUserPosts(user.$id));
+
+  /**
+   * Signs the user out of the application by signing out of the appwrite
+   * account, setting isLoggedIn to false, and setting the user to null.
+   * Then, redirects the user to the sign-in page.
+   */
+  const handleLogout = async () => {
+    await signOut();
+    setIsLoggedIn(false);
+    setUser(null);
+
+    router.replace('/sign-in')
+  };
   return (
     <SafeAreaView
       style={{
@@ -26,35 +42,43 @@ const Profile = () => {
         keyExtractor={(item) => String(item.$id)}
         renderItem={({ item }) => <VideoCard video={item} />}
         ListHeaderComponent={() => (
-          <View className='items-center justify-center gap-4 p-6'>
-            <View className='mb-0 w-full items-end'>
+          <View className='mb-12 mt-6 w-full items-center justify-center px-4'>
+            <TouchableOpacity
+              className='mb-10 w-full items-end'
+              onPress={handleLogout}
+            >
               <Image
                 source={icons.logout}
+                resizeMode='contain'
                 className='h-6 w-6'
               />
-            </View>
-            <View className='mt-0 flex flex-col items-center justify-center gap-3'>
+            </TouchableOpacity>
+            <View className='h-16 w-16 items-center justify-center rounded-lg border border-secondary'>
               <Image
                 source={{
-                  uri: avatar,
+                  uri: user?.avatar,
                 }}
-                width={56}
-                height={56}
-                className='rounded-lg border-2 border-secondary'
+                resizeMode='cover'
+                className='h-[90%] w-[90%] rounded-lg'
               />
-              <Text className='font-lregular text-lg text-white'>
-                {username}
-              </Text>
             </View>
-            <View className='mb-6 flex flex-row items-center justify-between gap-8'>
-              <View className='items-center justify-center p-1'>
-                <Text className='font-lbold text-white'>10</Text>
-                <Text className='font-llight text-white'>Posts</Text>
-              </View>
-              <View className='items-center justify-center p-1'>
-                <Text className='font-lbold text-white'>1.2k</Text>
-                <Text className='font-llight text-white'>Views</Text>
-              </View>
+            <InfoBox
+              title={user?.username}
+              containerStyles="mt-5"
+              titleStyles="text-lg"
+            />
+            <View className='mt-5 flex-row'>
+              <InfoBox
+                title={`${posts.length || 0}`}
+                subTitle='Posts'
+                containerStyles="mr-10"
+                titleStyles="text-xl"
+              />
+              <InfoBox
+                title='1.2k'
+                subTitle='Followers'
+                titleStyles="text-xl"
+              />
             </View>
           </View>
         )}
