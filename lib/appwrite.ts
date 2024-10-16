@@ -17,7 +17,7 @@ import {
   SignInProps,
   UploadProps,
 } from "@/types/types";
-import { DocumentPickerAsset } from "expo-document-picker";
+import { ImagePickerAsset } from "expo-image-picker";
 
 export const config = {
   endpoint: "https://cloud.appwrite.io/v1",
@@ -272,22 +272,22 @@ export const getFilePreview = async (
 /**
  * Uploads a file to the storage bucket.
  *
- * @param {{ uri: string; name: string; size: number; mimeType: string }} file - The file to upload.
+ * @param {{ uri: string; fileName: string; fileSize: number; mimeType: string }} file - The file to upload.
  * @param {"image" | "video"} type - The type of file to upload.
  * @returns {Promise<URL | undefined>} The uploaded file URL, or undefined if the upload fails.
  * @throws {Error} If uploading the file fails.
  */
 export const uploadFile = async (
-  file: DocumentPickerAsset,
+  file: ImagePickerAsset,
   type: "image" | "video"
 ): Promise<URL | undefined> => {
   if (!file) return;
 
-  const { mimeType, name, size, uri } = file;
+  const { mimeType, fileName, fileSize, uri } = file;
   const asset: FileObject = {
-    name,
+    name: fileName || "",
     type: mimeType || "",
-    size: size || 0,
+    size: fileSize || 0,
     uri,
   };
 
@@ -309,17 +309,17 @@ export const uploadFile = async (
 /**
  * Creates a new video post in the database and uploads the associated thumbnail and video to the storage bucket.
  *
- * @param {{ title: string; thumbnail: DocumentPickerAsset; video: DocumentPickerAsset; prompt: string; userId: string; }} form - The form data for the new post.
+ * @param {{ title: string; thumbnail: ImagePickerAsset; video: ImagePickerAsset; prompt: string; userId: string; }} form - The form data for the new post.
  * @returns {Promise<Models.Document | undefined>} The newly created document, or undefined if the creation fails.
  * @throws {Error} If creating the post fails.
  */
 export const createVideo = async (form: {
   title: string;
-  thumbnail: DocumentPickerAsset;
-  video: DocumentPickerAsset;
+  thumbnail: ImagePickerAsset;
+  video: ImagePickerAsset;
   prompt: string;
   userId: string;
-}) => {
+}): Promise<Models.Document | undefined> => {
   try {
     const [thumbnailUrl, videoUrl] = await Promise.all([
       uploadFile(form.thumbnail, "image"),

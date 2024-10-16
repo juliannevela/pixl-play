@@ -1,7 +1,7 @@
 import { View, Text, ScrollView, TouchableOpacity, Image, Alert } from 'react-native'
 import { useState } from 'react'
 import { SafeAreaView } from 'react-native-safe-area-context'
-import * as DocumentPicker from 'expo-document-picker'
+import * as ImagePicker from 'expo-image-picker'
 import { router } from 'expo-router'
 import { Video, ResizeMode } from 'expo-av'
 
@@ -27,10 +27,10 @@ const Create = () => {
   const [uploading, setUploading] = useState<boolean>(false);
 
   const openPicker = async (type: string) => {
-    const result = await DocumentPicker.getDocumentAsync({
-      type: type === 'image'
-        ? ['image/png', 'image/jpg', 'image/jpeg']
-        : ['video/mp4', 'video/gif']
+    const result = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: type === 'image' ? ImagePicker.MediaTypeOptions.Images : ImagePicker.MediaTypeOptions.Videos,
+      aspect: [4, 3],
+      quality: 1
     })
 
     if (!result.canceled) {
@@ -46,10 +46,6 @@ const Create = () => {
           video: result.assets[0]
         })
       }
-    } else {
-      setTimeout(() => {
-        Alert.alert('Document picked', JSON.stringify(result, null, 2))
-      }, 100)
     }
   }
 
@@ -120,9 +116,7 @@ const Create = () => {
                   uri: form.video.uri
                 }}
                 className='w-full h-64 rounded-2xl'
-                useNativeControls
                 resizeMode={ResizeMode.COVER}
-                isLooping
                 onError={(error) => {
                   console.log(error)
                   throw new Error(error)

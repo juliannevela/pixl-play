@@ -2,7 +2,7 @@ import * as Animatable from "react-native-animatable";
 import { ImageSourcePropType } from "react-native";
 import { Models } from "react-native-appwrite";
 import { Href } from "expo-router";
-import { DocumentPickerAsset } from "expo-document-picker";
+import { ImagePickerAsset } from "expo-image-picker";
 
 export type CreateUserProps = {
   email: string;
@@ -84,13 +84,13 @@ export type InfoBoxProps = {
 
 export type VideoData = {
   title: string;
-  video: DocumentPickerAsset | null;
-  thumbnail: DocumentPickerAsset | null;
+  video: ImagePickerAsset | null;
+  thumbnail: ImagePickerAsset | null;
   prompt: string;
 };
 
 export type UploadProps = {
-  file: DocumentPickerAsset;
+  file: ImagePickerAsset;
   type: "image" | "video";
 };
 
