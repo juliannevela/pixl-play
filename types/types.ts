@@ -34,7 +34,7 @@ export type FormFieldProps = {
 export type InitialGlobalContext = {
   isLoggedIn: boolean;
   setIsLoggedIn: React.Dispatch<React.SetStateAction<boolean>>;
-  user: Models.Document | null;
+  user: Models.Document;
   setUser: React.Dispatch<React.SetStateAction<Models.Document | null>>;
   isLoading: boolean;
 };
@@ -72,4 +72,11 @@ export type CustomAnimation = Animatable.CustomAnimation & {
 
 export type SearchInputProps = {
   initialQuery: string;
+};
+
+export type InfoBoxProps = {
+  title: string;
+  subTitle?: string;
+  containerStyles?: string;
+  titleStyles: string;
 };

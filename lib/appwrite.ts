@@ -107,6 +107,16 @@ export const signIn = async ({
   }
 };
 
+export const signOut = async () => {
+  try {
+    const session = await account.deleteSession("current");
+
+    return session;
+  } catch (error: any) {
+    throw new Error(error);
+  }
+};
+
 /**
  * Gets the current user's information.
  *
@@ -169,6 +179,34 @@ export const getLatestPosts = async (): Promise<Models.Document[]> => {
   }
 };
 
+/**
+ * Gets all the posts created by a user.
+ *
+ * @param {string} userId - The user ID to get the posts for.
+ * @returns {Promise<Models.Document[]>} All the posts created by the user.
+ * @throws {Error} If getting the posts fails.
+ */
+export const getUserPosts = async (
+  userId: string
+): Promise<Models.Document[]> => {
+  try {
+    const posts = await databases.listDocuments(databaseId, videoCollectionId, [
+      Query.equal("creator", userId),
+    ]);
+
+    return posts.documents;
+  } catch (error: any) {
+    throw new Error(error);
+  }
+};
+
+/**
+ * Searches for posts with a matching title.
+ *
+ * @param {string} query - The string to search for.
+ * @returns {Promise<Models.Document[]>} The posts that match the search query.
+ * @throws {Error} If searching fails.
+ */
 export const getSearchResults = async (
   query: string
 ): Promise<Models.Document[]> => {
