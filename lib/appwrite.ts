@@ -162,7 +162,9 @@ export const getCurrentUser = async (): Promise<Models.Document | null> => {
  */
 export const getAllPosts = async (): Promise<Models.Document[]> => {
   try {
-    const posts = await databases.listDocuments(databaseId, videoCollectionId);
+    const posts = await databases.listDocuments(databaseId, videoCollectionId, [
+      Query.orderDesc("$createdAt"),
+    ]);
 
     return posts.documents;
   } catch (error: any) {
