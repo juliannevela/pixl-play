@@ -283,12 +283,11 @@ export const uploadFile = async (
 ): Promise<URL | undefined> => {
   if (!file) return;
 
-  const { mimeType, fileName, fileSize, uri } = file;
   const asset: FileObject = {
-    name: fileName || "",
-    type: mimeType || "",
-    size: fileSize || 0,
-    uri,
+    name: file.fileName ?? "",
+    type: file.mimeType ?? "",
+    size: file.fileSize ?? 0,
+    uri: file.uri,
   };
 
   try {
