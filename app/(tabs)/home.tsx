@@ -12,8 +12,14 @@ import VideoCard from "@/components/VideoCard";
 
 import useAppwrite from "@/lib/useAppwrite";
 import { getAllPosts, getLatestPosts } from "@/lib/appwrite";
+import { useGlobalContext } from "@/context/GlobalProvider";
 
 const Home = () => {
+  const globalContext = useGlobalContext();
+  if (!globalContext) {
+    throw new Error('Global context is null.')
+  }
+  const { user } = globalContext;
   const { data: posts, refetch } = useAppwrite(getAllPosts);
   const { data: latestPosts } = useAppwrite(getLatestPosts);
   const [refreshing, setRefreshing] = useState<boolean>(false);
@@ -44,7 +50,7 @@ const Home = () => {
                   Welcome Back
                 </Text>
                 <Text className='font-lbold text-2xl text-white'>
-                  MerakiStudio
+                  {user?.username}
                 </Text>
               </View>
 
