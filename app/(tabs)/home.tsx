@@ -63,7 +63,7 @@ const Home = () => {
               </View>
             </View>
 
-            <SearchInput />
+            <SearchInput initialQuery="" />
 
             <View className='w-full flex-1 pb-8 pt-5'>
               <Text className='mb-3 font-lregular text-lg text-gray-100'>
