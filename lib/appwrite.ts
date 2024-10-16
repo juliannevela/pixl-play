@@ -7,8 +7,17 @@ import {
   ID,
   Models,
   Query,
+  Storage,
+  ImageGravity,
 } from "react-native-appwrite";
-import { CreateUserProps, SignInProps } from "@/types/types";
+import {
+  CreateUserProps,
+  FileObject,
+  FilePreview,
+  SignInProps,
+  UploadProps,
+} from "@/types/types";
+import { DocumentPickerAsset } from "expo-document-picker";
 
 export const config = {
   endpoint: "https://cloud.appwrite.io/v1",
@@ -42,6 +51,7 @@ client.setEndpoint(endpoint).setProject(projectId).setPlatform(platform);
 account = new Account(client);
 avatars = new Avatars(client);
 databases = new Databases(client);
+storage = new Storage(client);
 
 /**
  * Creates a new user in the Appwrite database, signs them in, and creates a corresponding user document in the users collection.
@@ -216,6 +226,120 @@ export const getSearchResults = async (
     ]);
 
     return posts.documents;
+  } catch (error: any) {
+    throw new Error(error);
+  }
+};
+
+/**
+ * Gets a URL for previewing a file in the storage bucket.
+ *
+ * @param {string} fileId - The ID of the file to preview.
+ * @param {"image" | "video"} type - The type of the file to preview.
+ * @returns {Promise<URL>} A URL for previewing the file.
+ * @throws {Error} If getting the file preview fails.
+ */
+export const getFilePreview = async (
+  fileId: string,
+  type: "image" | "video"
+): Promise<URL> => {
+  let fileUrl: URL;
+
+  try {
+    if (type === "video") {
+      fileUrl = storage.getFileView(storageId, fileId);
+    } else if (type === "image") {
+      fileUrl = storage.getFilePreview(
+        storageId,
+        fileId,
+        2000,
+        2000,
+        ImageGravity.Top,
+        100
+      );
+    } else {
+      throw new Error("Invalid file type");
+    }
+
+    if (!fileUrl) throw Error;
+
+    return fileUrl;
+  } catch (error: any) {
+    throw new Error(error);
+  }
+};
+
+/**
+ * Uploads a file to the storage bucket.
+ *
+ * @param {{ uri: string; name: string; size: number; mimeType: string }} file - The file to upload.
+ * @param {"image" | "video"} type - The type of file to upload.
+ * @returns {Promise<URL | undefined>} The uploaded file URL, or undefined if the upload fails.
+ * @throws {Error} If uploading the file fails.
+ */
+export const uploadFile = async (
+  file: DocumentPickerAsset,
+  type: "image" | "video"
+): Promise<URL | undefined> => {
+  if (!file) return;
+
+  const { mimeType, name, size, uri } = file;
+  const asset: FileObject = {
+    name,
+    type: mimeType || "",
+    size: size || 0,
+    uri,
+  };
+
+  try {
+    const uploadedFile = await storage.createFile(
+      storageId,
+      ID.unique(),
+      asset
+    );
+
+    const fileUrl = await getFilePreview(uploadedFile.$id, type);
+
+    return fileUrl;
+  } catch (error: any) {
+    throw new Error(error);
+  }
+};
+
+/**
+ * Creates a new video post in the database and uploads the associated thumbnail and video to the storage bucket.
+ *
+ * @param {{ title: string; thumbnail: DocumentPickerAsset; video: DocumentPickerAsset; prompt: string; userId: string; }} form - The form data for the new post.
+ * @returns {Promise<Models.Document | undefined>} The newly created document, or undefined if the creation fails.
+ * @throws {Error} If creating the post fails.
+ */
+export const createVideo = async (form: {
+  title: string;
+  thumbnail: DocumentPickerAsset;
+  video: DocumentPickerAsset;
+  prompt: string;
+  userId: string;
+}) => {
+  try {
+    const [thumbnailUrl, videoUrl] = await Promise.all([
+      uploadFile(form.thumbnail, "image"),
+      uploadFile(form.video, "video"),
+    ]);
+
+    const newPost = await databases.createDocument(
+      databaseId,
+      videoCollectionId,
+      ID.unique(),
+      {
+        title: form.title,
+        thumbnail: thumbnailUrl,
+        video: videoUrl,
+        prompt: form.prompt,
+        creator: form.userId,
+      }
+    );
+
+    return newPost;
   } catch (error: any) {
     throw new Error(error);
   }

@@ -8,17 +8,17 @@ const FormField = ({ title, value, placeholder, handleChangeText, otherStyles, .
   const [isFocused, setFocused] = useState(false)
   return (
     <View className={`space-y-2 ${otherStyles}`}>
-      <Text className='text-base text-gray-100 font-llight'>{title}</Text>
+      <Text className='text-base text-gray-100 font-lregular'>{title}</Text>
 
       <View
         className='flex-row w-full h-16 px-4 bg-black-100 rounded-2xl items-center'
         style={{
-          borderWidth: 2,
+          borderWidth: 1,
           borderColor: isFocused ? '#ff9c01' : '#232533',
         }}
       >
         <TextInput
-          className='flex-1 text-white font-llight font-base'
+          className='flex-1 text-white font-lregular font-base'
           value={value}
           placeholder={placeholder}
           placeholderTextColor='#7B7B8B'
