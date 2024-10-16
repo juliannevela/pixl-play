@@ -31,13 +31,13 @@ const SignIn = () => {
     setLoading(true);
 
     try {
-      const result = await signIn({
+      await signIn({
         email: form.email,
         password: form.password,
       });
 
-      const userAccount = await getCurrentUser();
-      setUser(userAccount);
+      const result = await getCurrentUser();
+      setUser(result);
       setIsLoggedIn(true);
 
       router.replace('/home');
